@@ -1,0 +1,78 @@
+# Kericho Tea Factory Production Pipeline (Lua Coroutines)
+
+## Student Information
+1. Dorcas Eileen – C026-01-0988/2025
+2. Stacy Njeri– C026-01-0939/2025
+3. Eleanor Wangeci- C026-01-0944/2025
+
+Course: PROGRAMMING LANGUAGES
+Assignment: Question 5 - Kericho Tea Factory Pipeline
+
+
+## Project Overview
+This project demonstrates the use of Lua coroutines to simulate a tea factory’s production pipeline.  
+Each batch passes through the following stages:
+- Receiving
+- Weighing
+- Withering
+- Drying (with quality check)
+- Grading
+- Packaging
+
+If a batch fails quality inspection after drying, it is reprocessed.
+
+## Features Implemented
+- Coroutine design for individual tea batches
+- Yielding batch ID and stage after each operation
+- Quality check with reprocessing logic
+- Scheduler for interleaving multiple batches
+- Explanation of coroutine state persistent
+
+## Output
+-Batch 3 at stage: Receiving
+Batch 2 at stage: Receiving
+Batch 1 at stage: Receiving
+Batch 3 at stage: Weighing
+Batch 2 at stage: Weighing
+Batch 1 at stage: Weighing
+Batch 3 at stage: Withering
+Batch 2 at stage: Withering
+Batch 1 at stage: Withering
+Batch 3 at stage: Drying
+Batch 2 at stage: Drying
+Batch 1 at stage: Drying
+Batch 3 at stage: Failed Quality Check ΓåÆ Reprocessing
+Batch 2 at stage: Grading
+Batch 1 at stage: Failed Quality Check ΓåÆ Reprocessing
+Batch 3 completed.
+Batch 2 at stage: Packaging
+Batch 1 completed.
+Batch 2 completed.
+
+//Each batch (Batch 1, Batch 2, Batch 3) moves through the pipeline stages in parallel.
+
+At the Drying stage, a quality check is performed.
+
+If a batch fails, the program prints "Failed Quality Check → Reprocessing" and restarts that batch until it passes.
+## Explain how coroutine state persistence simplifies the implementation compared with restarting a normal 
+function. (4 marks)
+*One of the main advantages of using coroutines in Lua is state persistence. Unlike normal functions, which always restart from the beginning when called again, coroutines can pause execution at a yield point and resume later from exactly where they left off.
+
+Why this simplifies the implementation:
+No external variables needed: Each coroutine internally remembers its own progress (e.g., which stage of the tea pipeline it was at). With normal functions, you would need extra variables or data structures to track this state manually.
+
+Natural scheduling: The scheduler can simply call coroutine.resume() to continue a batch from its last stage. With normal functions, you would have to re‑implement logic to skip already completed stages.
+
+Efficient reprocessing: When a batch fails, the coroutine can be restarted cleanly, and the state logic is contained within the coroutine itself. Normal functions would require restarting from scratch and reconstructing the pipeline state externally.
+
+Simpler code: Coroutines reduce boilerplate code for managing progress, since the coroutine itself acts as both the process and the memory of its current stage.
+Example:
+With coroutines:
+
+Batch 1 yields at Drying.
+
+The scheduler resumes it later at Grading without repeating earlier stages.
+
+With normal functions:
+
+You would need to track “Batch 1 is at Drying” in a separate variable, then write conditional logic to skip Receiving, Weighing, and Withering when calling the function again.
